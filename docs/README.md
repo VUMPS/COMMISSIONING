@@ -1,6 +1,6 @@
 #VUMPS commissioning README
 
-This document describes the steps taken in commissioning the VUMPS
+This document describes the commissioning of the VUMPS
 Spectrometer.
 
 ##1. Blaze Centering
