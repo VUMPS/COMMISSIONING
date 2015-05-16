@@ -59,7 +59,7 @@ resolve_routine, 'imgscl', /compile_full_file, /either
 ;resolve_routine, 'imgexp', /compile_full_file, /either
 ;resolve_routine, 'display', /compile_full_file, /either
 
-if ~keyword_set(fname) then fname='/Users/matt/projects/VUMPS/COMMISSIONING/data/Image19.fit'
+if ~keyword_set(fname) then fname='/Users/matt/projects/VUMPS/COMMISSIONING/data/ImageName182.fit'
 res = readfits(fname, head)
 ;res_to = double(transpose(res))
 res_to = res
