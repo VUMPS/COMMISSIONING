@@ -42,7 +42,10 @@ pro find_blaze_center, $
 bfname=bfname, $
 fname=fname, $
 inputordloc=inputordloc, $
-postplot=postplot
+postplot=postplot, $
+nobias=nobias, $
+xrange=xrange, $
+yrange=yrange
 
 ;Call used to produce figure in thesis:
 ;find_blaze_center, fname='/raw/mir7/141118/chi141118.1300.fits', $
@@ -52,22 +55,36 @@ postplot=postplot
 ;2178.2084, 1619.1879, 2498.5065, 1616.6729, 2924.3973, 1615.4155, $
 ;3459.4007, 1624.2177, 4004.9634, 1638.0497]
 
+resolve_routine, 'imgscl', /compile_full_file, /either
+;resolve_routine, 'imgexp', /compile_full_file, /either
+;resolve_routine, 'display', /compile_full_file, /either
 
-if ~keyword_set(fname) then fname='/mir7/CHIRON_TEST/sp0038.fits'
-if ~keyword_set(bfname) then bfname='/mir7/n1/qa30_0049.fits'
+if ~keyword_set(fname) then fname='/Users/matt/projects/VUMPS/COMMISSIONING/data/Image19.fit'
 res = readfits(fname, head)
-res_to = double(transpose(res))
+;res_to = double(transpose(res))
+res_to = res
 window, 1, xpos=720, ypos=450
 
-;subtract bias frame:
-res1 = readfits(bfname, head)
-res_t1 = double(transpose(res1))
-res_t = res_to - res_t1
+if ~keyword_set(nobias) then begin
+	if ~keyword_set(bfname) then bfname='/Users/matt/projects/VUMPS/COMMISSIONING/data/mono883.0.fits'
+	;subtract bias frame:
+	res1 = readfits(bfname, head)
+	res_t1 = double(transpose(res1))
+	res_t = res_to - res_t1
+endif else begin
+res_t = res_to 
+endelse;KW(nobias)
+
+;get the dimensions of the image:
+dims = size(res_t)
+xdim = dims[1]
+ydim = dims[2]
 
 usersymbol, 'circle', size_of_sym=1, /fill
 
 loadct, 39, /silent
-display, res_t, xran = [0d, 4096d], yran = [1250d, 2050d], $
+;stop
+display, res_t, xran = [0d, xdim], yran = [1400d, 1500d], $
 xtitle='CCD Column Number', ytitle='CCD Row Number'
 
 ntim = 10d
@@ -98,12 +115,12 @@ if keyword_set(postplot) then begin
 	thick, 3
 	!p.charsize=1
 
-	display, res_t, xran = [0d, 4096d], yran = [1250d, 2050d], $
+	display, res_t, xran = [0d, xdim], yran = [1250d, 2050d], $
 	xtitle='CCD Column Number', ytitle='CCD Row Number'
 endif
 
 rslt = poly_fit(x,y,2, yfit=yfit)
-yth = findgen(4096d)
+yth = dindgen(xdim)
 yth1 = rslt[0] + rslt[1]*yth + rslt[2]*yth^2
 oplot, yth1, ps=8, color=240
 
@@ -122,8 +139,8 @@ if keyword_set(postplot) then begin
 endif else window, 2, xpos=720, ypos=0
 
 
-sumarr = dblarr(4096L)
-for i=0L, round(4096-1d) do begin
+sumarr = dblarr(xdim)
+for i=0L, round(xdim-1d) do begin
 sumarr[i] = total(res_t[i, (yth1[i]-buf):(yth1[i]+buf)])
 endfor
 
@@ -135,7 +152,7 @@ sumarr_o = sumarr
 sumarr[midval:*] *= gaindif
 print, 'the gain difference is: ', gaindif
 
-xarr = findgen(4096d)
+xarr = dindgen(xdim)
 
 ;make the axes and text printed in black, but no data:
 plot, xarr[16:4080], sumarr_o[16:4080]/1d4, ps=8, /ysty, /xsty, $
@@ -152,11 +169,34 @@ rslt = poly_fit(xarr,sumarr,6, yfit=yfit)
 ;plot a vertical line showing the middle of the chip:
 oplot, [midval, midval], [0, max(sumarr/1d4)]
 
-resg = gaussfit(xarr, sumarr, Acoef, est = [6d4, 2048d, 1d, 0d, 0d, 0d], nterms=6)
+; fit a gaussian to the data.
+;0th coefficient: amplitude
+;1: mean
+;2: sigma
+;3: offset
+;4: linear term
+;5: parabolic term
+yerr = 3*sqrt(sumarr) + 5d3
+
+resg = gaussfit(xarr, sumarr, Acoef, est = [2.5d5, 2048d, 1d6, 0d], nterms=4, measure_errors=yerr)
+print, 'The best fit coefficients are: '
+print, Acoef
+stop
 xceng = Acoef[1]
 print, 'The center of the gaussian is: ', xceng
 
 oplot, resg/1d4, color=250, ps=8
+
+initial_offset = 0d
+initial_mean = 2048d
+initial_sigma = 1d3
+initial_amplitude = 2.5d5
+initial_area = initial_amplitude * sqrt(!dpi)
+
+start = [initial_offset, initial_mean, initial_sigma, initial_area]
+result = MPFITFUN('MYGAUSS', xarr, sumarr, yerr, start)
+stop
+g = acoef[0]*exp(-1. * ((xarr - acoef[1])^2/acoef[2])) + acoef[3] + acoef[4]*xarr + acoef[5]*xarr^2
 
 items=['Original', 'Gain-Corrected', 'Gaussian Fit']
 al_legend, items, psym=[8,8,8], color=[120, 0, 250], /right
@@ -169,7 +209,7 @@ oplot, [xceng, xceng], [0, max(sumarr/1d4)], col=250
 
 if keyword_set(postplot) then ps_close
 
-offamg = abs(4096d / 2d - xceng)
+offamg = abs(xdim / 2d - xceng)
 print, "You're off by ", strt(offamg), ' pixels from center.'
 if abs(offamg) lt 25 then print, "Nice Work!" else print, "Keep Trying!"
 end;find_blaze_center.pro
