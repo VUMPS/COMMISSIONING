@@ -14,15 +14,14 @@ setenv IDL_STARTUP ~/.idl_startup.pro
 # ADD DEPENDENCIES TO PATH:
 # 1st and 2nd dependencies: IDLAstro Package and the built in IDL lib:
 # https://github.com/wlandsman/IDLAstro
-setenv IDL_PATH +${IDLDIR}/lib:+${HOME}/projects/IDLAstro/pro:+${HOME}/projects/idlutils:+${HOME}/projects/coyote
+setenv IDL_PATH +${IDLDIR}/lib
+setenv IDL_PATH +${HOME}/projects/coyote:${IDL_PATH}
+setenv IDL_PATH +${HOME}/projects/IDLAstro/pro:${IDL_PATH}
 
-# 3rd dependency: idlutils
-# https://github.com/mattgiguere/idlutils
-# setenv IDL_PATH +${HOME}/projects/idlutils:${IDL_PATH}
+setenv IDL_PATH +${HOME}/idl:${IDL_PATH}
+setenv IDL_PATH +${HOME}/projects/idlutils:${IDL_PATH}
 
 setenv IDL_PATH +${HOME}/idl/mpfit:${IDL_PATH}
-
-# Now add the recursive path to the VUMPS commissioning code:
 setenv IDL_PATH +${HOME}/projects/VUMPS/COMMISSIONING/code:${IDL_PATH}
 
 set PROPATH = ${HOME}'/projects/VUMPS/COMMISSIONING/code'
