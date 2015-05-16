@@ -59,7 +59,8 @@ inputlines=inputlines, $
 nlines=nlines, $
 nplotcol=nplotcol, $
 nplotrow=nplotrow, $
-postplot=postplot
+postplot=postplot, $
+includebias=includebias
 
 
 ;COMMAND FOR THESIS FIGURES:
@@ -70,12 +71,22 @@ postplot=postplot
 
 
 
-if ~keyword_set(filename) then filename = '/mir7/n1/qa30_0146.fits'
-if ~keyword_set(biasfn) then biasfn = '/raw/mir7/data/110310/qa31.1000.fits'
+;if ~keyword_set(filename) then filename = '/Users/matt/projects/VUMPS/COMMISSIONING/data/focus_exposures/Focus_113226.fits'
+;if ~keyword_set(filename) then filename = '/Users/matt/projects/VUMPS/COMMISSIONING/data/focus_exposures/ImageName22.fit'
+;if ~keyword_set(filename) then filename = '/Users/matt/projects/VUMPS/COMMISSIONING/data/focus_exposures/ImageName25.fit'
+;if ~keyword_set(filename) then filename = '/Users/matt/projects/VUMPS/COMMISSIONING/data/focus_exposures/ImageName26.fit'
+;if ~keyword_set(filename) then filename = '/Users/matt/projects/VUMPS/COMMISSIONING/data/focus_exposures/ImageName28.fit'
+;if ~keyword_set(filename) then filename = '/Users/matt/projects/VUMPS/COMMISSIONING/data/focus_exposures/ImageName29.fit'
+if ~keyword_set(filename) then filename = '/Users/matt/projects/VUMPS/COMMISSIONING/data/focus_exposures/ImageName30.fit'
 if ~keyword_set(nlines) then nlines=1
+imo = double(readfits(filename, header))
+;stop
+
+if keyword_set(includebias) then begin
+if ~keyword_set(biasfn) then biasfn = '/raw/mir7/data/110310/qa31.1000.fits'
 bias = readfits(biasfn)
 bias_t = double(transpose(bias))
-imo = double(readfits(filename, header))
+
 
 loadct, 39, /silent
 ;returns x1, y1, x2, y2
@@ -130,6 +141,14 @@ endfor
 
 imo_t = transpose(imo)
 im = double(imo_t)
+
+endif else begin
+;imo_t = transpose(imo)
+imo_t = imo
+im = double(imo_t)
+
+endelse
+
 loadct,0, /silent
 usersymbol, 'circle', /fill
 window, 0, xsize=1800, ysize=1200
@@ -139,8 +158,8 @@ xt='Column Number'
 x0 = 102d
 ;y0 = 1500d
 ;y00 = 2000d
-y0=1d3
-y00=2d3
+y0=1.5d3
+y00=2.5d3
 sizim = size(im)
 xvec = indgen(sizim[1]-round(x0))+x0
 yvec = indgen(round(y00)-round(y0)+1)+y0
