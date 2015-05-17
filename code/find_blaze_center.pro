@@ -24,6 +24,10 @@
 ;		POSTPLOT: Output the plot to encapsulated postscript form.
 ;		INPUTORDLOC: Input the location of the order from a previous
 ;			attempt (e.g., for reproducibility or tweaking a plot).
+;		VUMPS: Use this keyword if you are using images taken with the
+;			VUMPS spectrometer. When this keyword is set, the overscan
+;			region in the center of the orders is removed. When fitting
+;			for the blaze peak.
 ;
 ;  OUTPUTS:
 ;
@@ -45,7 +49,8 @@ inputordloc=inputordloc, $
 postplot=postplot, $
 nobias=nobias, $
 xrange=xrange, $
-yrange=yrange
+yrange=yrange, $
+vumps=vumps
 
 ;Call used to produce figure in thesis:
 ;find_blaze_center, fname='/raw/mir7/141118/chi141118.1300.fits', $
@@ -55,10 +60,6 @@ yrange=yrange
 ;2178.2084, 1619.1879, 2498.5065, 1616.6729, 2924.3973, 1615.4155, $
 ;3459.4007, 1624.2177, 4004.9634, 1638.0497]
 
-resolve_routine, 'imgscl', /compile_full_file, /either
-;resolve_routine, 'imgexp', /compile_full_file, /either
-;resolve_routine, 'display', /compile_full_file, /either
-
 if ~keyword_set(fname) then fname='/Users/matt/projects/VUMPS/COMMISSIONING/data/ImageName182.fit'
 res = readfits(fname, head)
 ;res_to = double(transpose(res))
@@ -66,10 +67,10 @@ res_to = res
 window, 1, xpos=720, ypos=450
 
 if ~keyword_set(nobias) then begin
-	if ~keyword_set(bfname) then bfname='/Users/matt/projects/VUMPS/COMMISSIONING/data/mono883.0.fits'
+	if ~keyword_set(bfname) then bfname='/Users/matt/projects/VUMPS/COMMISSIONING/data/ImageName200.fit'
 	;subtract bias frame:
 	res1 = readfits(bfname, head)
-	res_t1 = double(transpose(res1))
+	;res_t1 = double(transpose(res1))
 	res_t = res_to - res_t1
 endif else begin
 res_t = res_to 
@@ -84,7 +85,7 @@ usersymbol, 'circle', size_of_sym=1, /fill
 
 loadct, 39, /silent
 ;stop
-display, res_t, xran = [0d, xdim], yran = [1400d, 1500d], $
+display, res_t, xran = [0d, xdim], yran = [1400d, 1700d], $
 xtitle='CCD Column Number', ytitle='CCD Row Number'
 
 ntim = 10d
