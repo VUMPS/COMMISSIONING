@@ -247,6 +247,8 @@ al_legend, items, linestyle=[0,0], color=[0, 250], /left
 ;plot a vertical line showing the center of the gaussian fit:
 oplot, [xceng, xceng] + chop_amount, [0, max(sumarr/1d4)], col=250
 
+xyouts, 0.5, 0.1, 'Difference between blaze peak and center of chip: ' + strt(abs(midval - xceng), f='(F12.1)') +' px', /normal, align=0.5
+
 if keyword_set(postplot) then ps_close
 
 offamg = abs(midval - xceng)
