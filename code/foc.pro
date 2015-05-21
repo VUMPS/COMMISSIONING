@@ -61,6 +61,9 @@ pro foc,avgpro,plt=plt, dewar=dewar, inpfile=inpfile,mark=mark, $
   imo = double(readfits(filename, header))
 if keyword_set(plt) then display,imo,/log
 
+pos = sxpar(header, 'encpos')
+print, pos
+
 if ~keyword_set(badheader) then begin
 ;returns x1, y1, x2, y2
 ;bblarr = str_coord_split(sxpar(header, 'bsec11')) - 1d
@@ -330,7 +333,7 @@ FOR j = 0,nl-1 do begin                ;Loop through all nl lines
       oplot,fineind,fit/a(0)
       xyouts,1,0.95,'c='+strtrim(fix(x(j)),2),size=1.3
       xyouts,1,0.85,'r='+strtrim(fix(y(j)),2),size=1.3
-      stop
+      ;stop
     ENDif
 ;    if j/4. - j/4 gt 0.7 then wait,1
 ;
@@ -560,8 +563,8 @@ IF keyword_set(plt) then begin
 ENDIF  ;end plotting section
 
 ;stop
-;slicevals = create_struct('position', pos, $
-;'x', xlin, 'y', ylin, 'fwhm', fwhmlin, 'header', header, 'avgfwhm', avgfwhmx, 'avgdx', avgdx)
+slicevals = create_struct('position', pos, $
+'x', xlin, 'y', ylin, 'fwhm', fwhmlin, 'header', header, 'avgfwhm', avgfwhmx, 'avgdx', avgdx)
 
 if keyword_set(focalmap) then begin
 fname = '/mir7/focalmap/slice'
