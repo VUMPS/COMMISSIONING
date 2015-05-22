@@ -77,7 +77,7 @@ includebias=includebias
 ;if ~keyword_set(filename) then filename = '/Users/matt/projects/VUMPS/COMMISSIONING/data/focus_exposures/ImageName26.fit'
 ;if ~keyword_set(filename) then filename = '/Users/matt/projects/VUMPS/COMMISSIONING/data/focus_exposures/ImageName28.fit'
 ;if ~keyword_set(filename) then filename = '/Users/matt/projects/VUMPS/COMMISSIONING/data/focus_exposures/ImageName29.fit'
-if ~keyword_set(filename) then filename = '/Users/matt/projects/VUMPS/COMMISSIONING/data/focus_exposures/ImageName30.fit'
+if ~keyword_set(filename) then filename = '/raw/vumps/150522/vumps150522.1037.fit'
 if ~keyword_set(nlines) then nlines=1
 imo = double(readfits(filename, header))
 ;stop
@@ -168,13 +168,15 @@ display,im[x0:*, y0:y00],xvec, yvec,ytit=yt,xtit=xt,/log, min=5;, max=50000d;,/l
 ;stop
 loadct, 39, /silent
 
-oplot, [2048, 2048], [0,5000], color=240
+midval = 2056
+
+oplot, [midval, midval], [0,5000], color=240
 
 ;superimpose vertical rainbow lines to guide the eye:
 colors = [70, 90, 120, 210, 250, 70, 90, 120, 210, 250]
 for i=0, 6 do begin
-	oplot, [2048 - (i+1)*256, 2048 - (i+1)*256], [0,5000], color=colors[i], linestyle=3
-	oplot, [2048 + (i+1)*256, 2048 + (i+1)*256], [0,5000], color=colors[i], linestyle=3
+	oplot, [midval - (i+1)*256, midval - (i+1)*256], [0,5000], color=colors[i], linestyle=3
+	oplot, [midval + (i+1)*256, midval + (i+1)*256], [0,5000], color=colors[i], linestyle=3
 endfor
 
 ;superimpose horizontal lines to guide the eye:
@@ -247,12 +249,12 @@ if keyword_set(postplot) then begin
   loadct,39, /silent
 
   ;the central vertical line should be solid red:
-  oplot, [2048, 2048], [0,5000], color=250
+  oplot, [midval, midval], [0,5000], color=250
 
   ;superimpose vertical rainbow lines to guide the eye:
   for i=0, 6 do begin
-	oplot, [2048 - (i+1)*256, 2048 - (i+1)*256], [0,5000], color=colors[i], linestyle=3
-	oplot, [2048 + (i+1)*256, 2048 + (i+1)*256], [0,5000], color=colors[i], linestyle=3
+	oplot, [midval - (i+1)*256, midval - (i+1)*256], [0,5000], color=colors[i], linestyle=3
+	oplot, [midval + (i+1)*256, midval + (i+1)*256], [0,5000], color=colors[i], linestyle=3
   endfor
 
   ;superimpose horizontal lines to guide the eye:
