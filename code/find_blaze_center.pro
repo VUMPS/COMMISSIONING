@@ -61,7 +61,7 @@ chop_order_wings=chop_order_wings
 ;2178.2084, 1619.1879, 2498.5065, 1616.6729, 2924.3973, 1615.4155, $
 ;3459.4007, 1624.2177, 4004.9634, 1638.0497]
 
-
+if 1 eq 0 then begin
 inputordloc = [226.33168,       1841.2501, $
 			   633.74276,       1880.6679, $
 			   994.85713,       1910.9893,$
@@ -72,16 +72,17 @@ inputordloc = [226.33168,       1841.2501, $
 			   3193.9511,       1967.8418,$
 			   3638.3995,       1954.1972,$
 			   3953.2172,       1938.2785]
+endif
 
 
-if ~keyword_set(fname) then fname='/Users/matt/projects/VUMPS/COMMISSIONING/data/ImageName182.fit'
+if ~keyword_set(fname) then fname='/raw/vumps/150522/vumps150522.1030.fit'
 res = double(readfits(fname, head))
 ;res_to = double(transpose(res))
 res_to = res
 ;window, 1, xpos=720, ypos=450
-
+stop
 if ~keyword_set(nobias) then begin
-	if ~keyword_set(bfname) then bfname='/Users/matt/projects/VUMPS/COMMISSIONING/data/ImageName200.fit'
+	if ~keyword_set(bfname) then bfname='/raw/vumps/150522/vumps150522.1031.fit'
 	;subtract bias frame:
 	res1 = double(readfits(bfname, head))
 	;res_t1 = double(transpose(res1))
@@ -181,7 +182,10 @@ gaindif = total(sumarr[minval:(midval-1)])/double(total(sumarr[midval:maxval]))
 chop_amount = 0
 if keyword_set(chop_order_wings) then begin
 	full_len = n_elements(sumarr)
-	chop_amount = 400
+	if chop_order_wings gt 1 then begin
+	endif else begin
+		chop_amount = 400
+	endelse
 	sumarr = sumarr[chop_amount:(full_len - 2. * chop_amount)]
 	minval -= chop_amount
 	midval -= chop_amount
