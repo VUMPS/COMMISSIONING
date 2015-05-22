@@ -28,3 +28,14 @@ IDL> pwd
 % Compiled module: PWD.
 /Users/matt/projects/VUMPS/COMMISSIONING/code
 ```
+
+###Centering the Blaze Peak
+
+Positioning the peak of the Blaze function at the center of the chip will ensure that the full free spectral range is on chip. The routine `find_blaze_center.pro` can help with this task.
+
+To use `find_blaze_center`, take an unsaturated quartz exposure in any resolution mode. Next, startup of the vumps commissioning environment and pass in the filename of the quartz exposure as a keyword argument:
+
+    find_blaze_center, fname='/raw/vumps/150522/vumps150522.1234.fit'
+
+
+###Rotating the CCD
