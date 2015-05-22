@@ -20,6 +20,8 @@ To center the blaze function, we used the routine `find_blaze_center.pro`. This 
 The blaze peak should be centered in the echelle order that is near the center of the full wavelength range of the spectrometer. Since VUMPS is a near-Littrow design, the "drift" in the blaze peak across the detector should not change much. This is in contrast to a design like CHIRON, which has a significant "drift" as a function of order due to the 16 degree tilt of the echelle grating.
 
 
+Image
+
 
 ##Running OWL
 
@@ -32,3 +34,5 @@ To turn the lamps on:
 
     cd vumps-spx
     labview spxMain.vi &
+
+Click the run button in the top-left corner
