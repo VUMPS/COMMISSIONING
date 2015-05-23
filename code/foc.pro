@@ -1,6 +1,6 @@
 pro foc,avgpro,plt=plt, dewar=dewar, inpfile=inpfile,mark=mark, $
         findloc=findloc, pr=pr, focalmap=focalmap, slicevals=slicevals, $
-        ngoods = ngoods, badheader=badheader
+        ngoods = ngoods, badheader=badheader, biasfn=biasfn
 ;
 ; PURPOSE:
 ; Focus Program for the VUMPS spectrometer
@@ -57,8 +57,14 @@ pro foc,avgpro,plt=plt, dewar=dewar, inpfile=inpfile,mark=mark, $
  ans = ' '
  usersymbol, 'circle', /fill
 ;
-  IF keyword_set(inpfile) then filename = inpfile
-  imo = double(readfits(filename, header))
+IF keyword_set(inpfile) then filename = inpfile
+imo = double(readfits(filename, header))
+
+if keyword_set(biasfn) then begin
+	biasim = double(readfits(biasfn))
+	imo -= biasim
+endif;KW(biasfn)  
+  
 if keyword_set(plt) then display,imo,/log
 
 pos = sxpar(header, 'encpos')
