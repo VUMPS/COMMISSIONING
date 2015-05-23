@@ -32,7 +32,8 @@
 ;-
 pro vumps_autofoc, $
 postplot = postplot, $
-showdisp=showdisp
+showdisp=showdisp, $
+nostopfoc=nostopfoc
 
 angstrom = '!6!sA!r!u!9 %!6!n'
 !p.color=0
@@ -99,6 +100,21 @@ files = [$
 'Focus_110629.fits', $
 'Focus_110654.fits']
 
+dir = '/raw/vumps/150523/'
+files = [$
+'vumps150523.1013.fit', $
+'vumps150523.1014.fit', $
+'vumps150523.1015.fit', $
+'vumps150523.1016.fit', $
+'vumps150523.1017.fit', $
+'vumps150523.1018.fit', $
+'vumps150523.1019.fit', $
+'vumps150523.1020.fit', $
+'vumps150523.1021.fit', $
+'vumps150523.1024.fit', $
+'vumps150523.1025.fit', $
+'vumps150523.1026.fit']
+
 if keyword_set(showdisp) then begin
 for f=0, n_elements(files)-1 do begin
 	print, 'file: ', dir, files[f]
@@ -118,16 +134,53 @@ for f=0, n_elements(files)-1 do begin
 	print, 'FWHM: ', slicevals.avgfwhm
 	positionarr[f] = slicevals.position
 	fwhmarr[f] = slicevals.avgfwhm
-	stop
+	if ~keyword_set(nostopfoc) then stop
 endfor
 
+positionarr = [$
+90000 , $
+100000, $
+110000, $
+120000, $
+130000, $
+140000, $
+150000, $
+160000, $
+170000, $
+125000, $
+135000, $
+145000]
 
 stop
+
 if keyword_set(postplot) then begin
    fn = nextnameeps('plot')
    thick, 2
    ps_open, fn, /encaps, /color
 endif
+
+
+plot, positionarr, fwhmarr, ps=8, $
+xtitle='Focus Position', $
+ytitle='Average FWHM'
+
+y_offset = min(fwhmarr)
+focus_center = positionarr[where(fwhmarr eq min(fwhmarr))]
+
+;fix the linear and cubic terms to make them stay zero:
+fixed = [0, 1, 0, 1, 0, 0]
+
+poly_init = [y_offset, 0, 1d-1, 0, 1d-1, focus_center]
+pars = mpfit_poly(positionarr, fwhmarr, order=4, init=poly_init, fixed=fixed)
+
+nfine = 1d2
+posfine = dindgen(nfine)*(max(positionarr) - min(positionarr))/nfine + min(positionarr)
+yfit = mypoly(posfine, pars)
+oplot, posfine, yfit, col=250
+
+print, '********************************************'
+print, 'The best focus position is: ', pars[-1]
+print, '********************************************'
 
 if keyword_set(postplot) then begin
    ps_close
