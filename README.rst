@@ -114,6 +114,16 @@ to exclude the pixels towards the edge of the chip::
     bfname = '/raw/vumps/150524/vumps150524.1047.fit', $
     chop_order_wings = 400, /vumps
 
+On mao1, the commands are:
+
+::
+
+    cd /data/tous/projects/VUMPS/COMMISSIONING
+    ./vumpsc.sh
+    find_blaze_center, fname='/data/raw/vumps/150524/vumps150524.1155.fit', $
+    bfname = '/data/raw/vumps/150524/vumps150524.1047.fit', $
+    chop_order_wings = 400, /vumps
+
 The resulting plot should look something like the figure below.
 
 .. image:: figures/BlazeCentering2.png
