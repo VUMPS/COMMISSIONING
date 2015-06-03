@@ -10,8 +10,8 @@ Dependencies
 ============
 
 Both the `reduction code`_ and commissioning code are written in the IDL_
- programming language, and they are both dependent on the following
- libraries:
+programming language, and they are both dependent on the following
+libraries:
 
 1. The built-in IDL_ library
 2. The IDLAstro_ package
