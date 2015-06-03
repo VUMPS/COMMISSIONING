@@ -130,8 +130,52 @@ The resulting plot should look something like the figure below.
   :width: 90%
 
 
-
-
-
 Rotating the CCD
 ----------------
+
+The next step is to rotate the CCD. This step positions the cross-
+dispersion direction of the spectrograph in the columnar direction
+on the CCD, allowing the orders to be integrated in the cross-
+dispersion direction during extraction without a loss of resolution.
+
+The ``rotate_ccd`` routine assists with CCD rotation. To use it, pass
+in a ThAr image using the filename keyword argument:
+
+::
+
+    rotate_ccd, filename='/raw/vumps/150524/vumps150524.1034.fit', /vumps
+
+``rotate_ccd`` also allows for the optional subtraction of a bias frame:
+
+::
+
+    rotate_ccd, filename='/raw/vumps/150524/vumps150524.1034.fit', $
+    /vumps, /includebias, $
+    biasfn = '/raw/vumps/150524/vumps150524.1047.fit'
+
+``rotate_ccd`` will then display the ThAr image and prompt the user to
+select a single ThAr line that is in two adjacent orders and is
+approximately equidistant from the center of the chip. ``rotate_ccd``
+superimposes lines to assist with line identification, and the lines
+of the same color are equidistant from the center of the chip.
+
+Below is an image showing the result after clicking the line.
+
+.. image:: figures/CCD_Rotation2.png
+  :width: 90%
+
+``rotate_ccd`` then integrates the line in the dispersion direction,
+and fits a gaussian to determine the line center.
+
+.. image:: figures/CCD_Rotation.png
+  :width: 90%
+
+Ideally, there should be no difference in the line center positions
+between the two lines. However, this whole process is approximate
+(e.g., the lines are only approximately equidistant from the
+center of the chip in the x-direction, and the order we are looking
+at is only approximately at the center of the chip in the y-direction).
+
+In the above example ``rotate_ccd`` printed out that the fitted
+difference in line centers between the two clicked lines was only
+1.4 pixels, which is an excellent position.

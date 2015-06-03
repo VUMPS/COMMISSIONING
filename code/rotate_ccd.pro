@@ -18,6 +18,9 @@
 ;		FILENAME: The 1x1 ThAr filename to be used for the CCD
 ;			rotation analysis. 
 ;
+;  OPTIONAL INPUTS:
+;		POSTPLOT: output plot to postscript
+;
 ;		BIASFN: The 1x1 bias frame to be used.
 ;
 ;		INPUTLINES: For reproducibility, you can manually enter the 
@@ -36,8 +39,12 @@
 ;		NPLOTROW: The number of rows for the plot of the line profiles.
 ;			If not specified there will be 2 plots per row.
 ;
-;  OPTIONAL INPUTS:
-;		POSTPLOT: output plot to postscript
+;		INCLUDEBIAS: If set, a bias will be subtracted. Use BIASFN
+;			to specify the bias frame filename
+;
+;		BMEDOSCAN: If set, the median for each row in the overscan region
+;			will be subtracted from each row in the data section. If not
+;			set, the default is to subtract the full bias frame.
 ;
 ;  OUTPUTS:
 ;
@@ -60,7 +67,9 @@ nlines=nlines, $
 nplotcol=nplotcol, $
 nplotrow=nplotrow, $
 postplot=postplot, $
-includebias=includebias
+includebias=includebias, $
+vumps=vumps, $
+bmedoscan = bmedoscan
 
 
 ;COMMAND FOR THESIS FIGURES:
@@ -68,86 +77,99 @@ includebias=includebias
 ;nlines=3, nplotcol=1, nplotrow=3, /postplot, inputlines = [3247.0902, 1672.4433, 532.48214, 1671.5567, $
 ;3249.4714, 1472.0660, 420.56409, 1473.8392, 3416.1578, 1191.0058, 396.75174, 1190.1191]
 
-
-
-
-;if ~keyword_set(filename) then filename = '/Users/matt/projects/VUMPS/COMMISSIONING/data/focus_exposures/Focus_113226.fits'
-;if ~keyword_set(filename) then filename = '/Users/matt/projects/VUMPS/COMMISSIONING/data/focus_exposures/ImageName22.fit'
-;if ~keyword_set(filename) then filename = '/Users/matt/projects/VUMPS/COMMISSIONING/data/focus_exposures/ImageName25.fit'
-;if ~keyword_set(filename) then filename = '/Users/matt/projects/VUMPS/COMMISSIONING/data/focus_exposures/ImageName26.fit'
-;if ~keyword_set(filename) then filename = '/Users/matt/projects/VUMPS/COMMISSIONING/data/focus_exposures/ImageName28.fit'
 ;if ~keyword_set(filename) then filename = '/Users/matt/projects/VUMPS/COMMISSIONING/data/focus_exposures/ImageName29.fit'
-if ~keyword_set(filename) then filename = '/raw/vumps/150522/vumps150522.1037.fit'
+if ~keyword_set(filename) then filename = '/raw/vumps/150524/vumps150524.1035.fit'
 if ~keyword_set(nlines) then nlines=1
 imo = double(readfits(filename, header))
 ;stop
 
 if keyword_set(includebias) then begin
-if ~keyword_set(biasfn) then biasfn = '/raw/mir7/data/110310/qa31.1000.fits'
-bias = readfits(biasfn)
-bias_t = double(transpose(bias))
+	if ~keyword_set(biasfn) then biasfn = '/raw/vumps/150524/vumps150524.1047.fit'
+	bias = double(readfits(biasfn))
+	;bias_t = transpose(bias)
 
+	loadct, 39, /silent
+	;returns x1, y1, x2, y2
+	if keyword_set(vumps) then begin
+		;hardcode the vumps CCD regions:
+		bblarr = [2047, 2097, 0, 2055]
+		bbrarr = [2102, 2153, 0, 2055]
+		bularr = [2047, 2097, 2056, 4111]
+		burarr = [2102, 2153, 2056, 4111]
+		
+		datblarr = [0, 2043, 0, 2055]
+		datbrarr = [2156, 4199, 0, 2055]
+		datularr = [0, 2043, 2056, 4111]
+		daturarr = [2156, 4199, 2056, 4111]
+	endif else begin
+		bblarr = str_coord_split(sxpar(header, 'bsec11')) - 1d
+		bbrarr = str_coord_split(sxpar(header, 'bsec12')) - 1d
+		bularr = str_coord_split(sxpar(header, 'bsec21')) - 1d
+		burarr = str_coord_split(sxpar(header, 'bsec22')) - 1d
 
-loadct, 39, /silent
-;returns x1, y1, x2, y2
-bblarr = str_coord_split(sxpar(header, 'bsec11')) - 1d
-bbrarr = str_coord_split(sxpar(header, 'bsec12')) - 1d
-bularr = str_coord_split(sxpar(header, 'bsec21')) - 1d
-burarr = str_coord_split(sxpar(header, 'bsec22')) - 1d
+		datblarr = str_coord_split(sxpar(header, 'dsec11')) - 1d
+		datbrarr = str_coord_split(sxpar(header, 'dsec12')) - 1d
+		datularr = str_coord_split(sxpar(header, 'dsec21')) - 1d
+		daturarr = str_coord_split(sxpar(header, 'dsec22')) - 1d
+	endelse
 
-datblarr = str_coord_split(sxpar(header, 'dsec11')) - 1d
-datbrarr = str_coord_split(sxpar(header, 'dsec12')) - 1d
-datularr = str_coord_split(sxpar(header, 'dsec21')) - 1d
-daturarr = str_coord_split(sxpar(header, 'dsec22')) - 1d
-;stop
+	;just subtract the median of the overscan region:
+	if keyword_set(bmedoscan) then begin
+		;subtract the bias from the bottom left:
+		;bias bottom left: bbl (11)
+		for i=datblarr[2], datblarr[3] do begin
+		  imo[datblarr[0]:datblarr[1], i] = $
+		  imo[datblarr[0]:datblarr[1], i] - $
+		  median(imo[(bblarr[0]+2):(bblarr[1]-3), i])
+		  ;median(imo[1:47, i])
+		endfor
 
-;subtract the bias from the bottom left:
-;bbl (11)
-for i=datblarr[2], datblarr[3] do begin
-  imo[datblarr[0]:datblarr[1], i] = $
-  imo[datblarr[0]:datblarr[1], i] - $
-  median(imo[(bblarr[0]+2):(bblarr[1]-3), i])
-  ;median(imo[1:47, i])
-endfor
+		;subtract the bias from the bottom right:
+		;bias upper left: bul (21)
+		for i=datularr[2], datularr[3] do begin
+		  imo[datularr[0]:datularr[1], i] = $
+		  imo[datularr[0]:datularr[1], i] - $
+		  median(imo[(bularr[0]+2):(bularr[1]-3), i])
+		  ;imo[101:2148, i] = imo[101:2148, i] - median(imo[1:47, i])
+		endfor
 
-;subtract the bias from the bottom right:
-;bul (21)
-for i=datularr[2], datularr[3] do begin
-  imo[datularr[0]:datularr[1], i] = $
-  imo[datularr[0]:datularr[1], i] - $
-  median(imo[(bularr[0]+2):(bularr[1]-3), i])
-  ;imo[101:2148, i] = imo[101:2148, i] - median(imo[1:47, i])
-endfor
+		;subtract the bias from the bottom right:
+		;bias bottom right: bbr (12)
+		;for i=0, 2047 do begin
+		for i=datbrarr[2], datbrarr[3] do begin
+		  imo[datbrarr[0]:datbrarr[1], i] = $
+		  imo[datbrarr[0]:datbrarr[1], i] - $
+		  median(imo[(bbrarr[0]+2):(bbrarr[1]-3), i])
+		 ;imo[2149:4196, i] = imo[2149:4196, i] - median(imo[4249:4294, i])
+		endfor
 
-;subtract the bias from the bottom right:
-;bbr (12)
-;for i=0, 2047 do begin
-for i=datbrarr[2], datbrarr[3] do begin
-  imo[datbrarr[0]:datbrarr[1], i] = $
-  imo[datbrarr[0]:datbrarr[1], i] - $
-  median(imo[(bbrarr[0]+2):(bbrarr[1]-3), i])
- ;imo[2149:4196, i] = imo[2149:4196, i] - median(imo[4249:4294, i])
-endfor
+		;bias upper right: bur (22)
+		;for i=2048, 4095 do begin
+		for i=daturarr[2], daturarr[3] do begin
+		  imo[daturarr[0]:daturarr[1], i] = $
+		  imo[daturarr[0]:daturarr[1], i] - $
+		  median(imo[(burarr[0]+2):(burarr[1]-3), i])
+		;imo[2149:4196, i] = imo[2149:4196, i] - median(imo[4249:4294, i])
+		endfor
+	endif else begin
+		imo = imo - bias
+	endelse;KW(bmedoscan)
 
-;bur (22)
-;for i=2048, 4095 do begin
-for i=daturarr[2], daturarr[3] do begin
-  imo[daturarr[0]:daturarr[1], i] = $
-  imo[daturarr[0]:daturarr[1], i] - $
-  median(imo[(burarr[0]+2):(burarr[1]-3), i])
-;imo[2149:4196, i] = imo[2149:4196, i] - median(imo[4249:4294, i])
-endfor
-
-
-imo_t = transpose(imo)
-im = double(imo_t)
+	;imo_t = transpose(imo)
+	im = double(imo)
 
 endif else begin
-;imo_t = transpose(imo)
-imo_t = imo
-im = double(imo_t)
-
+	;imo_t = transpose(imo)
+	imo_t = imo
+	im = double(imo_t)
 endelse
+
+;remove overscan region:
+if keyword_set(vumps) then begin
+	imleft = im[0:2043, *]
+	imright = im[2156:4199, *]
+	im = [imleft, imright]
+endif
 
 loadct,0, /silent
 usersymbol, 'circle', /fill
@@ -164,11 +186,12 @@ sizim = size(im)
 xvec = indgen(sizim[1]-round(x0))+x0
 yvec = indgen(round(y00)-round(y0)+1)+y0
 
-display,im[x0:*, y0:y00],xvec, yvec,ytit=yt,xtit=xt,/log, min=5;, max=50000d;,/log
-;stop
 loadct, 39, /silent
+display,im[x0:*, y0:y00],xvec, yvec,ytit=yt,xtit=xt,/log, min=5;, max=50000d;,/log
 
-midval = 2056
+;find the center of the chip:
+imsz = size(im)
+midval = imsz[1]/2
 
 oplot, [midval, midval], [0,5000], color=240
 
@@ -207,27 +230,35 @@ endif
 ;specified to average over. This gets the
 ;coordinates of each line pair:
 for i=0, nlines-1 do begin
-  if ~keyword_set(inputlines) then begin
-	  cursor, x1, y1, /down
-	  x1arr[i] = x1
-	  y1arr[i] = y1
-  endif
-  print, x1arr[i], y1arr[i]
-  oplot, [(x1arr[i]-sz),(x1arr[i]+sz)], [(y1arr[i]-sz),(y1arr[i]-sz)], color=linecol1           
-  oplot, [(x1arr[i]-sz),(x1arr[i]+sz)], [(y1arr[i]+sz),(y1arr[i]+sz)], color=linecol1
-  oplot, [(x1arr[i]-sz),(x1arr[i]-sz)], [(y1arr[i]-sz),(y1arr[i]+sz)], color=linecol1
-  oplot, [(x1arr[i]+sz),(x1arr[i]+sz)], [(y1arr[i]-sz),(y1arr[i]+sz)], color=linecol1
+	if ~keyword_set(inputlines) then begin
+		PRINT, '************************************************************'
+		print, 'IDENTIFY A THAR LINE THAT EXISTS IN TWO ADJACENT '
+		PRINT, 'ORDERS AND IS EQUIDISTANT FROM THE CENTER OF THE'
+		PRINT, 'CCD IN EACH ORDER.'
+		PRINT, ' '
+		PRINT, 'FIRST CLICK ON THE CENTER OF THE LEFT LINE'
+		PRINT, 'AND THEN CLICK ON THE CENTER OF THE LINE ON THE RIGHT SIDE'
+		PRINT, '************************************************************'
+		cursor, x1, y1, /down
+		x1arr[i] = x1
+		y1arr[i] = y1
+	endif
+	print, x1arr[i], y1arr[i]
+	oplot, [(x1arr[i]-sz),(x1arr[i]+sz)], [(y1arr[i]-sz),(y1arr[i]-sz)], color=linecol1           
+	oplot, [(x1arr[i]-sz),(x1arr[i]+sz)], [(y1arr[i]+sz),(y1arr[i]+sz)], color=linecol1
+	oplot, [(x1arr[i]-sz),(x1arr[i]-sz)], [(y1arr[i]-sz),(y1arr[i]+sz)], color=linecol1
+	oplot, [(x1arr[i]+sz),(x1arr[i]+sz)], [(y1arr[i]-sz),(y1arr[i]+sz)], color=linecol1
 
-  if ~keyword_set(inputlines) then begin
-	  cursor, x2, y2, /down
-	  x2arr[i] = x2
-	  y2arr[i] = y2
-  endif
-  print, x2arr[i], y2arr[i]
-  oplot, [(x2arr[i]-sz),(x2arr[i]+sz)], [(y2arr[i]-sz),(y2arr[i]-sz)], color=linecol2           
-  oplot, [(x2arr[i]-sz),(x2arr[i]+sz)], [(y2arr[i]+sz),(y2arr[i]+sz)], color=linecol2
-  oplot, [(x2arr[i]-sz),(x2arr[i]-sz)], [(y2arr[i]-sz),(y2arr[i]+sz)], color=linecol2
-  oplot, [(x2arr[i]+sz),(x2arr[i]+sz)], [(y2arr[i]-sz),(y2arr[i]+sz)], color=linecol2
+	if ~keyword_set(inputlines) then begin
+		cursor, x2, y2, /down
+		x2arr[i] = x2
+		y2arr[i] = y2
+	endif
+	print, x2arr[i], y2arr[i]
+	oplot, [(x2arr[i]-sz),(x2arr[i]+sz)], [(y2arr[i]-sz),(y2arr[i]-sz)], color=linecol2           
+	oplot, [(x2arr[i]-sz),(x2arr[i]+sz)], [(y2arr[i]+sz),(y2arr[i]+sz)], color=linecol2
+	oplot, [(x2arr[i]-sz),(x2arr[i]-sz)], [(y2arr[i]-sz),(y2arr[i]+sz)], color=linecol2
+	oplot, [(x2arr[i]+sz),(x2arr[i]+sz)], [(y2arr[i]-sz),(y2arr[i]+sz)], color=linecol2
 endfor;0->nlines
 
 ;print out the line number above the box surrounding each line:
