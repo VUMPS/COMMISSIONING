@@ -1,9 +1,13 @@
-# COMMISSIONING
+=============
+COMMISSIONING
+=============
+
 **A repo for commissioning the VUMPS Spectrometer**
 
 This repository contains code used for the commissioning of VUMPS.
 
-###Dependencies
+Dependencies
+============
 
 1. The built-in [IDL](http://www.exelisvis.com/ProductsServices/IDL.aspx) library
 2. The [IDLAstro](https://github.com/mattgiguere/IDLAstro) package
@@ -11,7 +15,9 @@ This repository contains code used for the commissioning of VUMPS.
 4. The [MPFIT](https://www.physics.wisc.edu/~craigm/idl/fitting.html) package
 5. The [coyote](http://www.idlcoyote.com/documents/programs.php) library
 
-###Getting Started
+Getting Started
+---------------
+
 To run code in this repo, startup IDL by executing the VUMPS commissioning startup script:
 
     ./vumpsc.sh
@@ -29,7 +35,8 @@ IDL> pwd
 /Users/matt/projects/VUMPS/COMMISSIONING/code
 ```
 
-###Centering the Blaze Peak
+Centering the Blaze Peak
+-------------------------
 
 Positioning the peak of the Blaze function at the center of the chip will ensure that the full free spectral range is on chip. The routine `find_blaze_center.pro` can help with this task.
 
@@ -38,4 +45,5 @@ To use `find_blaze_center`, take an unsaturated quartz exposure in any resolutio
     find_blaze_center, fname='/raw/vumps/150522/vumps150522.1234.fit'
 
 
-###Rotating the CCD
+Rotating the CCD
+----------------
