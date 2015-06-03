@@ -44,23 +44,33 @@ Install the dependencies
     unzip coyoteprograms.zip -d .
 
 
+Update the startup script
+-------------------------
 
-To run code in this repo, startup IDL by executing the VUMPS commissioning startup script:
+Included in this repository is a convenience script, `vumpsc.sh`,
+that sets up the environment for the commissioning code. Once the
+dependencies described above are installed, update `vumpsc.sh` with
+the appropriate path information, and then start the script from
+the command line. This will correctly set the IDL path and startup
+IDL in the ``VUMPS/COMMISSIONING/code`` directory:
 
+::
+
+    cd ~/projects/VUMPS/COMMISSIONING
     ./vumpsc.sh
+    Now setting the path to +/Users/matt/projects/VUMPS/COMMISSIONING/code:+/Users/matt/projects/idlutils:+/Users/matt/projects/IDLAstro/pro:+/Applications/exelis/idl/lib
+    Now changing the directory to: /Users/matt/projects/VUMPS/COMMISSIONING/code
+    IDL Version 8.2.2, Mac OS X (darwin x86_64 m64). (c) 2012, Exelis Visual Information Solutions, Inc.
+    IDL> pwd
+    % Compiled module: PWD.
+    /Users/matt/projects/VUMPS/COMMISSIONING/code
 
-  This will startup IDL in the `VUMPS/COMMISSIONING/code` directory and add
-  all dependencies to the IDL PATH:
+------------------------
+Commissioning Procedures
+------------------------
 
-```sh
-./vumpsc.sh
-Now setting the path to +/Users/matt/projects/VUMPS/COMMISSIONING/code:+/Users/matt/projects/idlutils:+/Users/matt/projects/IDLAstro/pro:+/Applications/exelis/idl/lib
-Now changing the directory to: /Users/matt/projects/VUMPS/COMMISSIONING/code
-IDL Version 8.2.2, Mac OS X (darwin x86_64 m64). (c) 2012, Exelis Visual Information Solutions, Inc.
-IDL> pwd
-% Compiled module: PWD.
-/Users/matt/projects/VUMPS/COMMISSIONING/code
-```
+This section describes several routines included in this package and
+shows examples of how to use them and their output.
 
 Centering the Blaze Peak
 -------------------------
