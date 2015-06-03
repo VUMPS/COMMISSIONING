@@ -80,7 +80,7 @@ res = double(readfits(fname, head))
 ;res_to = double(transpose(res))
 res_to = res
 ;window, 1, xpos=720, ypos=450
-stop
+
 if ~keyword_set(nobias) then begin
 	if ~keyword_set(bfname) then bfname='/raw/vumps/150522/vumps150522.1031.fit'
 	;subtract bias frame:
