@@ -16,13 +16,10 @@ endif
 setenv IDL_STARTUP ~/.idl_startup.pro
 
 # ADD DEPENDENCIES TO PATH:
-# 1st and 2nd dependencies: IDLAstro Package and the built in IDL lib:
-# https://github.com/wlandsman/IDLAstro
 setenv IDL_PATH +${IDLDIR}/lib
 setenv IDL_PATH +${HOME}/projects/coyote:${IDL_PATH}
 setenv IDL_PATH +${HOME}/projects/IDLAstro/pro:${IDL_PATH}
 
-setenv IDL_PATH +${HOME}/idl:${IDL_PATH}
 setenv IDL_PATH +${HOME}/projects/idlutils:${IDL_PATH}
 
 setenv IDL_PATH +${HOME}/idl/mpfit:${IDL_PATH}
