@@ -114,7 +114,7 @@ ntim = 10d
 x = dblarr(ntim)
 y = dblarr(ntim)
 if ~keyword_set(inputordloc) then begin
-	print, 'Mark the center order a few times'
+	print, 'Mark the center order '+strt(round(ntim))+' times'
 	for i=0, ntim-1 do begin
 		cursor, x1, y1, 4
 		x[i] = x1 & y[i] = y1
@@ -183,6 +183,7 @@ chop_amount = 0
 if keyword_set(chop_order_wings) then begin
 	full_len = n_elements(sumarr)
 	if chop_order_wings gt 1 then begin
+		chop_amount = chop_order_wings
 	endif else begin
 		chop_amount = 400
 	endelse

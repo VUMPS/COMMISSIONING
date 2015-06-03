@@ -88,6 +88,40 @@ a keyword argument:
 
     find_blaze_center, fname='/raw/vumps/150522/vumps150522.1234.fit'
 
+This will display the middle section (i.e. green orders) and prompt
+the user to click ten times across the order to roughly mark the
+order location.
+
+.. image:: figures/BlazeCentering.png
+  :width: 90%
+
+The code will then perform the following tasks:
+
+1. fit a polynomial to the marked order locations
+2. extract the counts in a swath that extends a few pixels above and
+   below the order
+3. sum the counts in the cross-dispersion direction
+4. perform a rough gain adjustment
+5. fit a gaussian to the summed counts
+6. plot the results and print out the offset between the mean of the
+   fitted gaussian and the center of the chip
+
+To slightly improve the result the user can use the optional keyword
+arguments ``bfname`` to input a bias frame, and ``chop_order_wings``
+to exclude the pixels towards the edge of the chip::
+
+    find_blaze_center, fname='/raw/vumps/150522/vumps150522.1234.fit', $
+    bfname = '/raw/vumps/150522/vumps150522.1080.fit', $
+    chop_order_wings = 400
+
+The resulting plot should look something like the figure below.
+
+.. image:: figures/BlazeCentering2.png
+  :width: 90%
+
+
+
+
 
 Rotating the CCD
 ----------------
