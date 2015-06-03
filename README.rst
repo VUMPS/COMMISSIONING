@@ -9,14 +9,41 @@ This repository contains code used for the commissioning of VUMPS.
 Dependencies
 ============
 
-1. The built-in [IDL](http://www.exelisvis.com/ProductsServices/IDL.aspx) library
-2. The [IDLAstro](https://github.com/mattgiguere/IDLAstro) package
-3. The [idlutils](https://github.com/mattgiguere/idlutils) package
-4. The [MPFIT](https://www.physics.wisc.edu/~craigm/idl/fitting.html) package
-5. The [coyote](http://www.idlcoyote.com/documents/programs.php) library
+Both the `reduction code`_ and commissioning code are written in the IDL_
+ programming language, and they are both dependent on the following
+ libraries:
 
+1. The built-in IDL_ library
+2. The IDLAstro_ package
+3. The idlutils_ package
+4. The MPFIT_ package
+5. The coyote_ library
+
+.. _`reduction code`: https://github.com/VUMPS/REDUCTION
+.. _IDL: http://www.exelisvis.com/ProductsServices/IDL.aspx
+.. _IDLAstro: https://github.com/mattgiguere/IDLAstro
+.. _idlutils: https://github.com/mattgiguere/idlutils
+.. _MPFIT: https://www.physics.wisc.edu/~craigm/idl/fitting.html
+.. _coyote: http://www.idlcoyote.com/documents/programs.php
+
+---------------
 Getting Started
 ---------------
+
+Install the dependencies
+------------------------
+
+::
+
+    cd ~/projects
+    git clone https://github.com/mattgiguere/IDLAstro.git
+    git clone https://github.com/mattgiguere/idlutils.git
+    wget https://www.physics.wisc.edu/~craigm/idl/down/mpfit.tar.gz
+    mkdir mpfit; tar -xvf mpfit.tar.gz -C mpfit
+    wget http://www.idlcoyote.com/programs/zip_files/coyoteprograms.zip
+    unzip coyoteprograms.zip -d .
+
+
 
 To run code in this repo, startup IDL by executing the VUMPS commissioning startup script:
 
