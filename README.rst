@@ -86,7 +86,7 @@ a keyword argument:
 
 ::
 
-    find_blaze_center, fname='/raw/vumps/150522/vumps150522.1234.fit'
+    find_blaze_center, fname='/raw/vumps/150522/vumps150522.1234.fit', /vumps
 
 This will display the middle section (i.e. green orders) and prompt
 the user to click ten times across the order to roughly mark the
@@ -110,9 +110,9 @@ To slightly improve the result the user can use the optional keyword
 arguments ``bfname`` to input a bias frame, and ``chop_order_wings``
 to exclude the pixels towards the edge of the chip::
 
-    find_blaze_center, fname='/raw/vumps/150522/vumps150522.1234.fit', $
-    bfname = '/raw/vumps/150522/vumps150522.1080.fit', $
-    chop_order_wings = 400
+    find_blaze_center, fname='/raw/vumps/150524/vumps150524.1155.fit', $
+    bfname = '/raw/vumps/150524/vumps150524.1047.fit', $
+    chop_order_wings = 400, /vumps
 
 The resulting plot should look something like the figure below.
 
