@@ -107,6 +107,8 @@ files = [$
 'Focus_110629.fits', $
 'Focus_110654.fits']
 
+spawn, 'hostname', hostname
+
 if hostname eq 'mao1.astro.yale.edu' then begin
 	dir = '/data/raw/vumps/150523/'
 endif else begin
