@@ -17,6 +17,13 @@
 ;
 ;  OPTIONAL INPUTS:
 ;
+;		SHOWDISP: Show a zoom into the same region of the image
+;			for all the images. This serves as a reality check
+;			"focus by eye".
+;
+;		NOSTOPFOC: Do NOT stop after every image has been run
+;			through foc.pro
+;
 ;  OUTPUTS:
 ;
 ;  OPTIONAL OUTPUTS:
@@ -100,7 +107,11 @@ files = [$
 'Focus_110629.fits', $
 'Focus_110654.fits']
 
-dir = '/raw/vumps/150523/'
+if hostname eq 'mao1.astro.yale.edu' then begin
+	dir = '/data/raw/vumps/150523/'
+endif else begin
+	dir = '/raw/vumps/150523/'
+endelse
 files = [$
 'vumps150523.1013.fit', $
 'vumps150523.1014.fit', $
