@@ -191,6 +191,48 @@ Focus and Tilt
 
 Lastly, we want the CCD to be in the focal plane, and we want the
 instrument to be in focus. If the CCD is not in the focal plane,
-then some the best we can do is to only get a fraction of the
-CCD in focus for any given position. ``foc.pro`` assists with both
-of these tasks.
+then only a fraction of the CCD can be in focus for any given position.
+``foc.pro`` assists with both the tilt and focus tasks.
+
+``foc.pro`` takes a ThAr image as input. It then calculates the FWHM
+for every line within a user-generated mask and creates plots showing
+the FWHM as a function of row, column, and also prints the average
+FWHM for all the lines.
+
+The first run with ``foc.pro`` will require a mask to be generated
+identifying regions that have isolated ThAr lines. Generate this
+mask using the ``findloc`` optional keyword argument:
+
+::
+
+    foc, /plt, /mark, /findloc, $
+    inpfile='/data/raw/vumps/150524/vumps150524.1034.fit'
+
+This will display the ThAr image and prompt you to enter the number
+of lines you would like to include in the mask. The more the better ---
+try for at least 120, and when identifying the lines, try to cover
+the entire chip evenly. Below is an image showing the locations
+of the 120 lines used during the initial commissioning at Yale.
+
+.. image:: figures/foc1.png
+  :width: 90%
+
+If the ``plt`` optional keyword is specified, ``foc.pro`` will then
+display the gaussian fit to every single line in the mask. Finally,
+it will show the FWHM as a function of CCD row and column, and some
+other plots.
+
+.. image:: figures/foc2.png
+  :width: 90%
+
+``foc.pro`` automatically saves the line list as ``lines.found`` in
+the code directory. To use ``foc.pro`` in the future without having
+to click on all the lines again, copy lines.found to
+``vumps_lines.found``.
+
+To execute ``foc.pro`` using the saved line list
+
+::
+
+  foc, /plt, $
+  inpfile='/data/raw/vumps/150524/vumps150524.1034.fit'
