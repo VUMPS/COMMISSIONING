@@ -114,7 +114,7 @@ to exclude the pixels towards the edge of the chip::
     bfname = '/raw/vumps/150524/vumps150524.1047.fit', $
     chop_order_wings = 400, /vumps
 
-On mao1, the commands are:
+On mao1, the commands are
 
 ::
 
@@ -153,6 +153,12 @@ in a ThAr image using the filename keyword argument:
     /vumps, /includebias, $
     biasfn = '/raw/vumps/150524/vumps150524.1047.fit'
 
+And an example of running this routine on mao1 is
+
+::
+
+    rotate_ccd, filename='/data/raw/vumps/150524/vumps150524.1034.fit', /vumps
+
 ``rotate_ccd`` will then display the ThAr image and prompt the user to
 select a single ThAr line that is in two adjacent orders and is
 approximately equidistant from the center of the chip. ``rotate_ccd``
@@ -179,3 +185,12 @@ at is only approximately at the center of the chip in the y-direction).
 In the above example ``rotate_ccd`` printed out that the fitted
 difference in line centers between the two clicked lines was only
 1.4 pixels, which is an excellent position.
+
+Focus and Tilt
+----------------
+
+Lastly, we want the CCD to be in the focal plane, and we want the
+instrument to be in focus. If the CCD is not in the focal plane,
+then some the best we can do is to only get a fraction of the
+CCD in focus for any given position. ``foc.pro`` assists with both
+of these tasks.
