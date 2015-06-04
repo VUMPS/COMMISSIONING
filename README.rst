@@ -236,3 +236,25 @@ To execute ``foc.pro`` using the saved line list
 
   foc, /plt, $
   inpfile='/data/raw/vumps/150524/vumps150524.1034.fit'
+
+Autofocus
+---------
+
+Lastly, there is a routine that will run ``foc.pro`` for a list of
+input files, fit a fourth order polynomial to the average FWHM as
+a function of focus position, and print the best-fit focus to
+screen. This routine is called ``vumps_autofoc.pro``. To use it,
+first update the ``files`` and ``positionarr`` arrays within
+the code, and then type ``vumps_autofoc`` at the command line. If
+you would like to save the final plot as an encapsulated postscript
+file, use the postplot optional keyword argument:
+
+::
+
+    vumps_autofoc, /postplot
+
+Below is the ``/postplot`` generated plot from the initial commissioning
+period at Yale.
+
+.. image:: figures/focus.png
+  :width: 90%
